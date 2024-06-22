@@ -1,5 +1,5 @@
+import { db } from "../firebase";
 import {
-    getFirestore,
     collection,
     addDoc,
     query,
@@ -9,9 +9,7 @@ import {
     doc,
 } from "firebase/firestore";
 
-const db = getFirestore();
-
-export const addRating = async (instructorId, rating) => {
+export const addRating = async (instructorId: string, rating: number) => {
     const ratingsRef = collection(db, "ratings");
     await addDoc(ratingsRef, { instructorId, rating });
     const q = query(ratingsRef, where("instructorId", "==", instructorId));
