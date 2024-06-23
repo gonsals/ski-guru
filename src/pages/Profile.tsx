@@ -4,10 +4,11 @@ import {
     createInstructorProfile,
 } from "../services/instructorService";
 import { useAuth } from "../context/AuthContext";
+import { Profile_type } from "../types/Profile";
 
 const Profile: React.FC = () => {
     const { currentUser } = useAuth();
-    const [profile, setProfile] = useState({
+    const [profile, setProfile] = useState<Profile_type>({
         name: "",
         bio: "",
         experience: "",
