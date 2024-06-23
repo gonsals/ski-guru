@@ -53,6 +53,22 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
         }));
     };
 
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                if (event.target && event.target.result) {
+                    setProfile((prevProfile) => ({
+                        ...prevProfile,
+                        photoURL: event.target.result as string,
+                    }));
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
@@ -142,15 +158,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
                     </div>
                     <div className="mb-4">
                         <label className="block text-sm font-medium">
-                            Photo URL:
+                            Upload Photo:
                         </label>
                         <input
-                            type="text"
-                            name="photoURL"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
                             className="mt-1 p-2 border rounded w-full"
-                            value={profile.photoURL}
-                            onChange={handleChange}
-                            required
                         />
                     </div>
                     <button

@@ -13,6 +13,7 @@ const Profile: React.FC = () => {
         bio: "",
         experience: "",
         certifications: "",
+        photoURL: "",
     });
 
     const [loading, setLoading] = useState(true);
