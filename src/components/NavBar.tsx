@@ -16,32 +16,39 @@ const Navbar: React.FC = () => {
     };
 
     return (
-        <nav className="bg-blue-500 p-4 flex justify-between items-center">
-            <div className="text-white">
-                <Link to="/" className="mr-4">
-                    Home
-                </Link>
-            </div>
-            {currentUser ? (
-                <>
-                    <img
-                        className="w-10 h-10 rounded-full cursor-pointer"
-                        src={currentUser.photoURL || "default-profile.png"}
-                        alt="Profile"
-                        onClick={handleProfileClick}
-                    />
-                    {isModalOpen && <ProfileModal onClose={handleCloseModal} />}
-                </>
-            ) : (
+        <nav className="bg-blue-500 p-4">
+            <div className="container mx-auto flex justify-between items-center">
                 <div className="text-white">
-                    <Link to="/login" className="mr-4">
-                        Login
-                    </Link>
-                    <Link to="/signup" className="mr-4">
-                        Sign Up
+                    <Link to="/" className="mr-4">
+                        Home
                     </Link>
                 </div>
-            )}
+                {currentUser ? (
+                    <>
+                        <img
+                            className="w-10 h-10 rounded-full cursor-pointer"
+                            src={
+                                currentUser.photoURL ||
+                                "/images/default-profile.jpg"
+                            }
+                            alt="Profile"
+                            onClick={handleProfileClick}
+                        />
+                        {isModalOpen && (
+                            <ProfileModal onClose={handleCloseModal} />
+                        )}
+                    </>
+                ) : (
+                    <div className="text-white">
+                        <Link to="/login" className="mr-4">
+                            Login
+                        </Link>
+                        <Link to="/signup" className="mr-4">
+                            Sign Up
+                        </Link>
+                    </div>
+                )}
+            </div>
         </nav>
     );
 };
