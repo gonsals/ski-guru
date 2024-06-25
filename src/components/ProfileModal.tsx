@@ -6,6 +6,8 @@ import {
 import { logout } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
 import { Profile_type } from "../types/Profile";
+import { storage } from "../firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 interface ProfileModalProps {
     onClose: () => void;
@@ -13,13 +15,15 @@ interface ProfileModalProps {
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
     const { currentUser } = useAuth();
-    const [profile, setProfile] = useState<Profile_type>({
-        name: "",
-        bio: "",
-        experience: "",
-        certifications: "",
-        photoURL: "",
-    });
+    const [profile, setProfile] = useState<Profile_type & { photoFile?: File }>(
+        {
+            name: "",
+            bio: "",
+            experience: "",
+            certifications: "",
+            photoURL: "",
+        }
+    );
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
 
@@ -56,16 +60,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                if (event.target && event.target.result) {
-                    setProfile((prevProfile) => ({
-                        ...prevProfile,
-                        photoURL: event.target.result as string,
-                    }));
-                }
-            };
-            reader.readAsDataURL(file);
+            setProfile((prevProfile) => ({
+                ...prevProfile,
+                photoFile: file,
+            }));
         }
     };
 
@@ -73,7 +71,25 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
         e.preventDefault();
         try {
             if (currentUser) {
-                await createInstructorProfile(currentUser.uid, profile);
+                // Subir la foto si existe
+                let photoURL = profile.photoURL;
+                if (profile.photoFile) {
+                    const storageRef = ref(
+                        storage,
+                        `profile_images/${currentUser.uid}/${profile.photoFile.name}`
+                    );
+                    await uploadBytes(storageRef, profile.photoFile);
+                    photoURL = await getDownloadURL(storageRef);
+                }
+
+                // Crear el objeto de perfil actualizado
+                const updatedProfile: Profile_type = {
+                    ...profile,
+                    photoURL,
+                };
+
+                // Actualizar el perfil en Firestore
+                await createInstructorProfile(currentUser.uid, updatedProfile);
                 alert("Profile updated successfully");
                 onClose();
             }
