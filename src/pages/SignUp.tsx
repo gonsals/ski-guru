@@ -5,13 +5,20 @@ import { useNavigate } from "react-router-dom";
 const SignUp: React.FC = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [photo, setPhoto] = useState<File | null>(null);
     const [error, setError] = useState("");
     const navigate = useNavigate();
+
+    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setPhoto(e.target.files[0]);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            await register(email, password);
+            await register(email, password, photo || undefined);
             navigate("/");
         } catch (err) {
             setError("Failed to sign up");
@@ -46,6 +53,16 @@ const SignUp: React.FC = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-sm font-medium">
+                        Profile Photo
+                    </label>
+                    <input
+                        type="file"
+                        className="mt-1 p-2 border rounded w-full"
+                        onChange={handlePhotoChange}
                     />
                 </div>
                 <button

@@ -48,10 +48,7 @@ const Home: React.FC = () => {
                     >
                         <img
                             className="w-full h-48 object-cover rounded-md mb-4"
-                            src={
-                                instructor.photoURL ||
-                                "../../public/images/default-profile.jpg"
-                            }
+                            src={instructor.photoURL}
                             alt={`${instructor.name}'s profile`}
                         />
                         <h2 className="text-2xl font-semibold mb-2">
