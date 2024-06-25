@@ -6,6 +6,7 @@ const SignUp: React.FC = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [photo, setPhoto] = useState<File | null>(null);
+    const [role, setRole] = useState("client");
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
@@ -18,7 +19,7 @@ const SignUp: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            await register(email, password, photo || undefined);
+            await register(email, password, role, photo || undefined);
             navigate("/");
         } catch (err) {
             setError("Failed to sign up");
@@ -56,6 +57,17 @@ const SignUp: React.FC = () => {
                     />
                 </div>
                 <div className="mb-4">
+                    <label className="block text-sm font-medium">Role</label>
+                    <select
+                        className="mt-1 p-2 border rounded w-full"
+                        value={role}
+                        onChange={(e) => setRole(e.target.value)}
+                    >
+                        <option value="client">Client</option>
+                        <option value="instructor">Instructor</option>
+                    </select>
+                </div>
+                <div className="mb-4">
                     <label className="block text-sm font-medium">
                         Profile Photo
                     </label>
@@ -65,6 +77,7 @@ const SignUp: React.FC = () => {
                         onChange={handlePhotoChange}
                     />
                 </div>
+
                 <button
                     type="submit"
                     className="w-full bg-blue-500 text-white py-2 rounded"

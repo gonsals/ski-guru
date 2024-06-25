@@ -1,38 +1,40 @@
 import React, { useState, useEffect } from "react";
-import {
-    createInstructorProfile,
-    getInstructorProfile,
-} from "../services/instructorService";
 import { logout } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
-import { Profile_type } from "../types/Profile";
 import { storage } from "../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getProfile } from "../services/getProfileService";
+import { createInstructorProfile } from "../services/instructorService";
+import { createClientProfile } from "../services/clientService";
+import { Profile_Client_type, Profile_Instructor_type } from "../types/Profile";
 
 interface ProfileModalProps {
     onClose: () => void;
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
-    const { currentUser } = useAuth();
-    const [profile, setProfile] = useState<Profile_type & { photoFile?: File }>(
-        {
-            name: "",
-            bio: "",
-            experience: "",
-            certifications: "",
-            photoURL: "",
-        }
-    );
+    const { currentUser, userProfile } = useAuth();
+    const [profile, setProfile] = useState<
+        (Profile_Instructor_type | Profile_Client_type) & { photoFile?: File }
+    >({
+        name: "",
+        bio: "",
+        photoURL: "",
+        role: "",
+        experience: "",
+        certifications: "",
+        preferences: "",
+    });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchProfile = async () => {
-            if (currentUser) {
+            if (currentUser && userProfile) {
                 try {
-                    const profileData = await getInstructorProfile(
-                        currentUser.uid
+                    const profileData = await getProfile(
+                        currentUser.uid,
+                        userProfile.role
                     );
                     if (profileData) {
                         setProfile(profileData);
@@ -45,7 +47,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
             }
         };
         fetchProfile();
-    }, [currentUser]);
+    }, [currentUser, userProfile]);
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -71,7 +73,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
         e.preventDefault();
         try {
             if (currentUser) {
-                // Subir la foto si existe
                 let photoURL = profile.photoURL;
                 if (profile.photoFile) {
                     const storageRef = ref(
@@ -82,14 +83,23 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
                     photoURL = await getDownloadURL(storageRef);
                 }
 
-                // Crear el objeto de perfil actualizado
-                const updatedProfile: Profile_type = {
+                const updatedProfile = {
                     ...profile,
                     photoURL,
                 };
 
-                // Actualizar el perfil en Firestore
-                await createInstructorProfile(currentUser.uid, updatedProfile);
+                if (userProfile?.role === "instructor") {
+                    await createInstructorProfile(
+                        currentUser.uid,
+                        updatedProfile as Profile_Instructor_type
+                    );
+                } else if (userProfile?.role === "client") {
+                    await createClientProfile(
+                        currentUser.uid,
+                        updatedProfile as Profile_Client_type
+                    );
+                }
+
                 alert("Profile updated successfully");
                 onClose();
             }
@@ -148,30 +158,56 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
                             required
                         ></textarea>
                     </div>
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium">
-                            Experience:
-                        </label>
-                        <textarea
-                            name="experience"
-                            className="mt-1 p-2 border rounded w-full"
-                            value={profile.experience}
-                            onChange={handleChange}
-                            required
-                        ></textarea>
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium">
-                            Certifications:
-                        </label>
-                        <textarea
-                            name="certifications"
-                            className="mt-1 p-2 border rounded w-full"
-                            value={profile.certifications}
-                            onChange={handleChange}
-                            required
-                        ></textarea>
-                    </div>
+                    {userProfile?.role === "instructor" && (
+                        <>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium">
+                                    Experience:
+                                </label>
+                                <textarea
+                                    name="experience"
+                                    className="mt-1 p-2 border rounded w-full"
+                                    value={
+                                        (profile as Profile_Instructor_type)
+                                            .experience
+                                    }
+                                    onChange={handleChange}
+                                    required
+                                ></textarea>
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium">
+                                    Certifications:
+                                </label>
+                                <textarea
+                                    name="certifications"
+                                    className="mt-1 p-2 border rounded w-full"
+                                    value={
+                                        (profile as Profile_Instructor_type)
+                                            .certifications
+                                    }
+                                    onChange={handleChange}
+                                    required
+                                ></textarea>
+                            </div>
+                        </>
+                    )}
+                    {userProfile?.role === "client" && (
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium">
+                                Preferences:
+                            </label>
+                            <textarea
+                                name="preferences"
+                                className="mt-1 p-2 border rounded w-full"
+                                value={
+                                    (profile as Profile_Client_type).preferences
+                                }
+                                onChange={handleChange}
+                                required
+                            ></textarea>
+                        </div>
+                    )}
                     <div className="mb-4">
                         <label className="block text-sm font-medium">
                             Upload Photo:

@@ -29,7 +29,7 @@ const Navbar: React.FC = () => {
                             className="w-10 h-10 rounded-full cursor-pointer"
                             src={
                                 currentUser.photoURL ||
-                                "/images/default-profile.jpg"
+                                "../../public/images/default-profile.jpg"
                             }
                             alt="Profile"
                             onClick={handleProfileClick}

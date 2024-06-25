@@ -5,12 +5,13 @@ import {
     signOut,
 } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
-import { Profile_type } from "../types/Profile";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { Profile_Instructor_type, Profile_Client_type } from "../types/Profile";
 
 export const register = async (
     email: string,
     password: string,
+    role: string,
     photoFile?: File
 ) => {
     const { user } = await createUserWithEmailAndPassword(
@@ -19,7 +20,8 @@ export const register = async (
         password
     );
 
-    let photoURL = "../../public/images/default-profile.jpg";
+    let photoURL =
+        "https://firebasestorage.googleapis.com/v0/b/skiguru-ce4a4.appspot.com/o/profile_images%2Fdefault%2Fdefault-profile.jpg?alt=media&token=792f8ff0-2918-496c-a926-d055200262ab";
 
     if (photoFile) {
         const storageRef = ref(
@@ -31,19 +33,36 @@ export const register = async (
     }
 
     const displayName = email.split("@")[0];
-    const bio = "Me encanta esquiar.";
-    const experience = "He trabajado dos temporadas en los Pirineos.";
-    const certifications = "TD1";
 
-    const profile: Profile_type = {
-        name: displayName,
-        bio,
-        experience,
-        certifications,
-        photoURL,
-    };
+    if (role === "instructor") {
+        const bio = "Me encanta esquiar.";
+        const experience = "He trabajado dos temporadas en los Pirineos.";
+        const certifications = "TD1";
 
-    await setDoc(doc(db, "instructors", user.uid), profile);
+        const profile: Profile_Instructor_type = {
+            name: displayName,
+            bio,
+            photoURL,
+            role,
+            experience,
+            certifications,
+        };
+
+        await setDoc(doc(db, "instructors", user.uid), profile);
+    } else if (role === "client") {
+        const bio = "Soy cliente";
+        const preferences = "Preferencias del cliente";
+
+        const profile: Profile_Client_type = {
+            name: displayName,
+            bio,
+            photoURL,
+            role,
+            preferences,
+        };
+
+        await setDoc(doc(db, "clients", user.uid), profile);
+    }
 
     return user;
 };

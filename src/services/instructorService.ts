@@ -1,40 +1,39 @@
 import { db } from "../firebase";
 import { doc, setDoc, getDoc, getDocs, collection } from "firebase/firestore";
-import { Profile_type } from "../types/Profile";
+import { Profile_Instructor_type } from "../types/Profile";
+
+const db_name = "instructors";
 
 export const createInstructorProfile = async (
     uid: string,
-    profile: Profile_type
+    profile: Profile_Instructor_type
 ) => {
-    try {
-        await setDoc(doc(db, "instructors", uid), profile);
-        console.log("Perfil del instructor creado correctamente.");
-    } catch (error) {
-        console.error("Error al crear el perfil del instructor:", error);
-    }
+    const profileRef = doc(db, db_name, uid);
+    await setDoc(profileRef, profile, { merge: true });
 };
 
 export const getInstructorProfile = async (uid: string) => {
-    try {
-        const docRef = doc(db, "instructors", uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-            return docSnap.data() as Profile_type;
-        } else {
-            return null;
-        }
-    } catch (error) {
-        console.error("Error al obtener el perfil del instructor:", error);
-        return null;
+    const profileRef = doc(db, db_name, uid);
+    const profileSnap = await getDoc(profileRef);
+    if (profileSnap.exists()) {
+        return profileSnap.data() as Profile_Instructor_type;
+    } else {
+        throw new Error("No such profile!");
     }
 };
 
 export const getAllInstructors = async () => {
-    const instructorsRef = collection(db, "instructors");
+    const instructorsRef = collection(db, db_name);
     const querySnapshot = await getDocs(instructorsRef);
-    const instructors: Profile_type[] = [];
+    const instructors: Profile_Instructor_type[] = [];
     querySnapshot.forEach((doc) => {
-        instructors.push(doc.data() as Profile_type);
+        const data = doc.data() as Profile_Instructor_type;
+        const uid = doc.id;
+        const instructorWithUid: Profile_Instructor_type = {
+            ...data,
+            uid: uid,
+        };
+        instructors.push(instructorWithUid);
     });
     return instructors;
 };

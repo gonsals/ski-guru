@@ -1,51 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; // Importa Link desde react-router-dom
 import { getAllInstructors } from "../services/instructorService";
-
-interface Profile {
-    name: string;
-    bio: string;
-    experience: string;
-    certifications: string;
-    photoURL?: string;
-    rating?: number;
-}
+import { Profile_Instructor_type } from "../types/Profile";
 
 const Home: React.FC = () => {
-    const [instructors, setInstructors] = useState<Profile[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+    const [instructors, setInstructors] = useState<Profile_Instructor_type[]>(
+        []
+    );
 
     useEffect(() => {
         const fetchInstructors = async () => {
             try {
-                const instructorList = await getAllInstructors();
-                setInstructors(instructorList);
-            } catch (err) {
-                setError("Failed to load instructors");
-            } finally {
-                setLoading(false);
+                const fetchedInstructors = await getAllInstructors();
+                setInstructors(fetchedInstructors);
+            } catch (error) {
+                console.error("Failed to fetch instructors:", error);
             }
         };
+
         fetchInstructors();
     }, []);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>{error}</div>;
-    }
-
     return (
-        <div className="container mx-auto mt-8">
-            <h1 className="text-3xl font-bold mb-6">Instructors</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {instructors.map((instructor, index) => (
-                    <div
-                        key={index}
-                        className="p-6 bg-white rounded-lg shadow-lg"
-                    >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {instructors.map((instructor) => (
+                <Link
+                    key={instructor.uid}
+                    to={`/instructors/${instructor.uid}`}
+                >
+                    <div className="p-6 bg-white rounded-lg shadow-lg cursor-pointer">
                         <img
                             className="w-full h-48 object-cover rounded-md mb-4"
                             src={instructor.photoURL}
@@ -55,18 +38,19 @@ const Home: React.FC = () => {
                             {instructor.name}
                         </h2>
                         <p className="mb-2">{instructor.bio}</p>
-                        <p className="mb-2">
-                            Experience: {instructor.experience}
-                        </p>
-                        <p className="mb-2">
-                            Certifications: {instructor.certifications}
-                        </p>
-                        {instructor.rating && (
-                            <p>Rating: {instructor.rating}</p>
+                        {instructor.role === "instructor" && (
+                            <>
+                                <p className="mb-2">
+                                    Experience: {instructor.experience}
+                                </p>
+                                <p className="mb-2">
+                                    Certifications: {instructor.certifications}
+                                </p>
+                            </>
                         )}
                     </div>
-                ))}
-            </div>
+                </Link>
+            ))}
         </div>
     );
 };
