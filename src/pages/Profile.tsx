@@ -44,23 +44,31 @@ const InstructorProfile: React.FC = () => {
 
     return (
         <div className="max-w-4xl mx-auto mt-8 p-8 bg-white shadow-lg rounded-lg">
-            <img src={instructor.photoURL} alt="Profile image" />
-            <h1 className="text-3xl font-bold mb-4 rounded">
+            <div className="flex justify-center mb-8">
+                <div className="relative w-32 h-32">
+                    <img
+                        className="w-full h-full object-cover rounded-full"
+                        src={instructor.photoURL}
+                        alt="Profile image"
+                    />
+                </div>
+            </div>
+            <h1 className="text-4xl font-bold text-center text-blue-600 mb-6">
                 {instructor.name}'s Profile
             </h1>
-            <div className="mb-4">
-                <p>
+            <div className="text-center mb-6">
+                <p className="text-gray-700 text-lg leading-relaxed">
                     <span className="font-semibold">Bio:</span> {instructor.bio}
                 </p>
             </div>
-            <div className="mb-4">
-                <p>
+            <div className="text-center mb-6">
+                <p className="text-gray-700 text-lg leading-relaxed">
                     <span className="font-semibold">Experience:</span>{" "}
                     {instructor.experience}
                 </p>
             </div>
-            <div className="mb-4">
-                <p>
+            <div className="text-center mb-6">
+                <p className="text-gray-700 text-lg leading-relaxed">
                     <span className="font-semibold">Certifications:</span>{" "}
                     {instructor.certifications}
                 </p>
