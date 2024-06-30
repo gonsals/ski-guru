@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import ProfileModal from "./ProfileModal";
 import { useAuth } from "../context/AuthContext";
 
 const Navbar: React.FC = () => {
-    const { currentUser } = useAuth();
+    const { currentUser, userProfile } = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleProfileClick = () => {
@@ -28,8 +28,9 @@ const Navbar: React.FC = () => {
                         <img
                             className="w-10 h-10 rounded-full cursor-pointer"
                             src={
-                                currentUser.photoURL ||
-                                "/images/default-profile.jpg"
+                                userProfile
+                                    ? userProfile.photoURL
+                                    : "/images/default-profile.jpg"
                             }
                             alt="Profile"
                             onClick={handleProfileClick}

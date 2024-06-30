@@ -35,12 +35,17 @@ export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
                 const userProfileRef = doc(db, "instructors", user.uid);
                 const userProfileDoc = await getDoc(userProfileRef);
                 if (userProfileDoc.exists()) {
-                    setUserProfile(userProfileDoc.data() as Profile_Base);
+                    const profileData = userProfileDoc.data() as Profile_Base;
+                    console.log("Instructor Profile Data:", profileData);
+                    setUserProfile(profileData);
                 } else {
                     const clientProfileRef = doc(db, "clients", user.uid);
                     const clientProfileDoc = await getDoc(clientProfileRef);
                     if (clientProfileDoc.exists()) {
-                        setUserProfile(clientProfileDoc.data() as Profile_Base);
+                        const profileData =
+                            clientProfileDoc.data() as Profile_Base;
+                        console.log("Client Profile Data:", profileData);
+                        setUserProfile(profileData);
                     } else {
                         setUserProfile(null);
                     }

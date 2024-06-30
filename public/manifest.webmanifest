@@ -4,8 +4,6 @@
     "description": "Find and book the best ski instructors",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#ff0000",
-    "theme_color": "#ffff00",
     "icons": [
         {
             "src": "/icons/pwa-192x192.png",
