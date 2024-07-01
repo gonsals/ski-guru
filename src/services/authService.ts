@@ -12,6 +12,7 @@ export const register = async (
     email: string,
     password: string,
     role: string,
+    sport: string,
     photoFile?: File
 ) => {
     const { user } = await createUserWithEmailAndPassword(
@@ -46,6 +47,7 @@ export const register = async (
             role,
             experience,
             certifications,
+            sport,
         };
 
         await setDoc(doc(db, "instructors", user.uid), profile);
@@ -59,6 +61,7 @@ export const register = async (
             photoURL,
             role,
             preferences,
+            sport,
         };
 
         await setDoc(doc(db, "clients", user.uid), profile);

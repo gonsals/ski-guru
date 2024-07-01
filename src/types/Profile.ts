@@ -4,6 +4,7 @@ export interface Profile_Base {
     bio: string;
     photoURL: string;
     role: string;
+    sport: string;
 }
 
 export interface Profile_Instructor_type extends Profile_Base {
