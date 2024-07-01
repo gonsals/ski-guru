@@ -11,7 +11,7 @@ const OnboardingSport: React.FC = () => {
     const handleSportSelection = async (sportSelection: string) => {
         setSport(sportSelection);
         try {
-            await register(email, password, role, photo, sport || undefined);
+            await register(email, password, role, sport, photo || undefined);
             await login(email, password);
             navigate("/");
         } catch (err) {

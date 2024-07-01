@@ -43,7 +43,6 @@ export const OnboardingProvider = ({
     const [sport, setSport] = useState<string>("");
     const [error, setError] = useState<string>("");
 
-
     return (
         <OnboardingContext.Provider
             value={{
