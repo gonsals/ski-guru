@@ -66,7 +66,7 @@ export const register = async (
 
         await setDoc(doc(db, "clients", user.uid), profile);
     }
-
+    console.log("service sport :", sport);
     return user;
 };
 

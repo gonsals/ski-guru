@@ -1,17 +1,23 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useOnboarding } from "../context/OnboardingContext";
 import { login, register } from "../services/authService";
 
 const OnboardingSport: React.FC = () => {
-    const { email, password, photo, role, setSport, error, sport } =
-        useOnboarding();
+    const { email, password, photo, role, setSport, error } = useOnboarding();
     const navigate = useNavigate();
 
     const handleSportSelection = async (sportSelection: string) => {
         setSport(sportSelection);
+
         try {
-            await register(email, password, role, sport, photo || undefined);
+            await register(
+                email,
+                password,
+                role,
+                sportSelection,
+                photo || undefined
+            );
+            console.log("register sport : ", sportSelection);
             await login(email, password);
             navigate("/");
         } catch (err) {
@@ -20,32 +26,52 @@ const OnboardingSport: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col justify-center items-center h-screen bg-blue-100">
-            <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
-                <h2 className="text-2xl font-bold mb-4 text-center">
+        <div className="flex flex-col justify-center items-center">
+            <div className="w-full p-8 bg-white rounded-lg shadow-lg max-w-max">
+                <h2 className="text-stone-900 text-base font-normal font-['Outfit'] leading-normal text-center">
                     Create your profile
                 </h2>
                 {error && <div className="text-red-500 mb-4">{error}</div>}
-                <p className="text-center mb-4">Your sport is...?</p>
-                <div className="flex flex-col gap-4">
-                    <button
-                        className="w-full bg-blue-500 text-white py-2 rounded"
+                <p className="text-stone-900 text-2xl font-extrabold font-mono leading-loose text-center mb-4">
+                    Your sport is...?
+                </p>
+                <div className="flex md:flex-row flex-col gap-4 items-center justify-center">
+                    <div
+                        className="relative w-[343px] h-[162.33px] md:h-[249.50px] rounded-[32px] cursor-pointer"
                         onClick={() => handleSportSelection("ski")}
                     >
-                        Ski
-                    </button>
-                    <button
-                        className="w-full bg-blue-500 text-white py-2 rounded"
-                        onClick={() => handleSportSelection("snowboard")}
+                        <div className="absolute inset-0 bg-cover bg-center bg-ski rounded-[32px]"></div>
+                        <div className="absolute inset-0 bg-black/40 rounded-[32px]"></div>
+                        <div className="relative flex flex-col justify-center items-center h-full w-full p-4">
+                            <div className="text-zinc-100 text-xl font-bold font-['JetBrains Mono'] leading-normal">
+                                Ski
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        className="relative w-[343px] h-[162.33px] md:h-[249.50px] rounded-[32px] cursor-pointer"
+                        onClick={() => handleSportSelection("ski")}
                     >
-                        Snowboard
-                    </button>
-                    <button
-                        className="w-full bg-blue-500 text-white py-2 rounded"
+                        <div className="absolute inset-0 bg-cover bg-center bg-snow rounded-[32px]"></div>
+                        <div className="absolute inset-0 bg-black/40 rounded-[32px]"></div>
+                        <div className="relative flex flex-col justify-center items-center h-full w-full p-4">
+                            <div className="text-zinc-100 text-xl font-bold font-['JetBrains Mono'] leading-normal">
+                                Snowboard
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        className="relative w-[343px] h-[162.33px] md:h-[249.50px] rounded-[32px] cursor-pointer"
                         onClick={() => handleSportSelection("ski-snowboard")}
                     >
-                        Ski & Snowboard
-                    </button>
+                        <div className="absolute inset-0 bg-cover bg-center bg-ski_snow rounded-[32px]"></div>
+                        <div className="absolute inset-0 bg-black/40 rounded-[32px]"></div>
+                        <div className="relative flex flex-col justify-center items-center h-full w-full p-4">
+                            <div className="text-zinc-100 text-xl font-bold font-['JetBrains Mono'] leading-normal">
+                                Ski & Snowboard
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
