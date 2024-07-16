@@ -33,7 +33,7 @@ const Home: React.FC = () => {
 
     return (
         <>
-            <div className="flex justify-center mt-6 mb-4">
+            <div className="  flex justify-center mt-6 mb-4 mx-2">
                 <div className="relative w-full max-w-md bg-slate-200 py-4 px-5 rounded-3xl">
                     <input
                         type="text"
@@ -47,11 +47,11 @@ const Home: React.FC = () => {
                     </button>
                 </div>
             </div>
-            <div className=" p-4">
+            <div className=" p-4 bg-slate-200 rounded-[32px] mx-3">
                 <p className="text-stone-900 text-2xl font-extrabold font-mono leading-loose text-center mb-4">
                     Instructors
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
                     {filteredInstructors.map((instructor) => (
                         <Link
                             key={instructor.uid}
@@ -73,11 +73,15 @@ const Home: React.FC = () => {
                                             Experience: {instructor.experience}
                                         </p> */}
                                         <p className="mb-2">
-                                            Certifications:{" "}
                                             {instructor.certifications}
                                         </p>
-                                    </>
-                                )}
+                                    </div>
+                                    <div className="flex items-center">
+                                        <button className=" text-slate-100 text-base font-normal font-['Outfit'] leading-none px-6 py-3 bg-slate-600 rounded-full">
+                                            Book
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </Link>
                     ))}
