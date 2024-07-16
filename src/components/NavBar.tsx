@@ -12,8 +12,9 @@ const Navbar: React.FC = () => {
                     <Link to="/" className="mr-4">
                         Home
                     </Link>
-
-                    <button onClick={() => logout()}>Exit</button>
+                    {currentUser && (
+                        <button onClick={() => logout()}>Exit</button>
+                    )}
                 </div>
                 {currentUser ? (
                     <>
