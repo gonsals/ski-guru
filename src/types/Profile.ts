@@ -1,3 +1,12 @@
+export interface Experience {
+    title: string;
+    company: string;
+    startDate: string;
+    endDate: string | undefined;
+    location: string;
+    description: string;
+}
+
 export interface Profile_Base {
     uid?: string;
     name: string;
@@ -8,7 +17,7 @@ export interface Profile_Base {
 }
 
 export interface Profile_Instructor_type extends Profile_Base {
-    experience: string;
+    experience: Array<Experience>;
     certifications: string;
 }
 

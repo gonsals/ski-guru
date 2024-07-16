@@ -14,7 +14,7 @@ const AppRouter = () => (
         <OnboardingProvider>
             <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/instructors/:id" element={<Profile />} />
+                <Route path="/profile/:userType/:id" element={<Profile />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/onboarding/role" element={<OnboardingRole />} />

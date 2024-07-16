@@ -37,7 +37,17 @@ export const register = async (
 
     if (role === "instructor") {
         const bio = "Me encanta esquiar.";
-        const experience = "He trabajado dos temporadas en los Pirineos.";
+        const experience = [
+            {
+                title: "Ski Instructor",
+                company: "Aspen Ski School",
+                startDate: "2015",
+                endDate: "2016",
+                location: "Aspen, CO",
+                description:
+                    "Teaching skiing to beginners and advanced skiers.",
+            },
+        ];
         const certifications = "TD1";
 
         const profile: Profile_Instructor_type = {

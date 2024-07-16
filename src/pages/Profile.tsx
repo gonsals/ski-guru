@@ -1,30 +1,43 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Profile_Instructor_type } from "../types/Profile";
+import { Profile_Instructor_type, Profile_Client_type } from "../types/Profile";
 import { getInstructorProfile } from "../services/instructorService";
+import { getClientProfile } from "../services/clientService";
+import { useAuth } from "../context/AuthContext";
 
-const InstructorProfile: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
+const Profile: React.FC = () => {
+    const { currentUser } = useAuth();
+    const { userType, id } = useParams<{ id: string; userType: string }>();
     const [instructor, setInstructor] =
         useState<Profile_Instructor_type | null>(null);
+    const [client, setClient] = useState<Profile_Client_type | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchInstructorProfile = async () => {
+        const fetchProfile = async () => {
             try {
                 if (id) {
-                    const instructorProfile = await getInstructorProfile(id);
-                    setInstructor(instructorProfile);
-                    setLoading(false);
+                    if (userType === "client") {
+                        const clientProfile = await getClientProfile(id);
+                        setClient(clientProfile);
+                    } else {
+                        const instructorProfile = await getInstructorProfile(
+                            id
+                        );
+                        setInstructor(instructorProfile);
+                    }
                 }
             } catch (error) {
-                console.error("Error fetching instructor profile:", error);
+                console.error("Error fetching profile:", error);
+                setError("Error fetching profile");
+            } finally {
                 setLoading(false);
             }
         };
 
-        fetchInstructorProfile();
-    }, [id]);
+        fetchProfile();
+    }, [id, userType]);
 
     if (loading) {
         return (
@@ -34,47 +47,162 @@ const InstructorProfile: React.FC = () => {
         );
     }
 
-    if (!instructor) {
+    if (error) {
         return (
             <div className="flex items-center justify-center h-screen">
-                Instructor not found
+                {error}
+            </div>
+        );
+    }
+
+    if (userType === "instructor" && instructor) {
+        return (
+            <div className="max-w-4xl mx-auto mt-2 p-8 bg-white shadow-lg rounded-lg">
+                <div className="flex">
+                    <div className="relative w-20 h-20">
+                        <img
+                            className="w-full h-full object-cover rounded-full"
+                            src={instructor.photoURL}
+                            alt="Profile image"
+                        />
+                        <div className="absolute bottom-0 right-0 w-7 h-7 bg-white rounded-full flex items-center justify-center">
+                            <div className=" bg-blue-500 rounded-full w-5 h-5 flex items-center justify-center">
+                                <button className="text-white text-xl mb-1">
+                                    +
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h1 className=" text-base font-semibold text-gray-900 mb-2">
+                    {instructor.name}
+                </h1>
+                <p className="text-gray-700 mb-6">{instructor.bio}</p>
+                {currentUser?.uid === id && (
+                    <div className="flex justify-center mb-8 gap-2">
+                        <button className="bg-gray-200 text-gray-700 py-2 px-4 rounded-full  w-full">
+                            Edit Profile
+                        </button>
+                        <button className="bg-gray-200 text-gray-700 py-2 px-4 rounded-full  w-full">
+                            Share Profile
+                        </button>
+                    </div>
+                )}
+                <div className="mb-8">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                        Experience
+                    </h2>
+                    {instructor.experience.map((exp, index) => (
+                        <div className=" flex gap-4">
+                            <img
+                                className=" w-12 h-12 mt-2"
+                                src="/icons/pwa-192x192.png"
+                                alt="prueba"
+                            />
+                            <div key={index} className="mb-6">
+                                <p className="text-gray-700 text-lg leading-relaxed">
+                                    <span className="font-semibold">
+                                        {exp.title}
+                                    </span>{" "}
+                                    - {exp.company}
+                                    <br />
+                                    {exp.startDate} - {exp.endDate}
+                                    <br />
+                                    {exp.location}
+                                    <br />
+                                    {exp.description}
+                                </p>
+                            </div>
+                        </div>
+                    ))}
+                    {currentUser?.uid === id && (
+                        <div className="flex justify-center">
+                            <button className=" border border-slate-600/opacity-20 py-2 px-4 rounded-full w-full">
+                                Add Experience
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                <div className="mb-8">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                        Recommendations
+                    </h2>
+                    <div className="flex border-b border-gray-300 mb-4">
+                        <button className="inline-block text-blue-600 border-b-2 border-blue-600 pb-2">
+                            Received
+                        </button>
+                        <button className="inline-block text-gray-600 pb-2 ml-4">
+                            Given
+                        </button>
+                    </div>
+
+                    {/* {instructor.recommendations.map((rec, index) => (
+                        <div key={index} className="flex mb-4">
+                            <img
+                                className="w-12 h-12 object-cover rounded-full mr-4"
+                                src={rec.photoURL}
+                                alt={`${rec.name}'s profile`}
+                            />
+                            <div>
+                                <p className="font-semibold">
+                                    {rec.name}{" "}
+                                    <span className="text-gray-600">
+                                        · Connected
+                                    </span>
+                                </p>
+                                <p className="text-gray-600">{rec.company}</p>
+                                <p className="text-gray-700">{rec.text}</p>
+                            </div>
+                        </div>
+                    ))} */}
+                    {currentUser?.uid === id && (
+                        <div className="flex justify-center">
+                            <button className="border border-slate-600/opacity-20 py-2 px-4 rounded-full w-full">
+                                Add Recommendation
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    }
+
+    if (userType === "client" && client) {
+        return (
+            <div className="max-w-4xl mx-auto mt-8 p-8 bg-white shadow-lg rounded-lg">
+                <div className="flex justify-center mb-8">
+                    <div className="relative w-32 h-32">
+                        <img
+                            className="w-full h-full object-cover rounded-full"
+                            src={client.photoURL}
+                            alt="Profile image"
+                        />
+                    </div>
+                </div>
+                <h1 className="text-4xl font-bold text-center text-blue-600 mb-6">
+                    {client.name}'s Profile
+                </h1>
+                <div className="text-center mb-6">
+                    <p className="text-gray-700 text-lg leading-relaxed">
+                        <span className="font-semibold">Bio:</span> {client.bio}
+                    </p>
+                </div>
+                <div className="text-center mb-6">
+                    <p className="text-gray-700 text-lg leading-relaxed">
+                        <span className="font-semibold">Preferences:</span>{" "}
+                        {client.preferences}
+                    </p>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="max-w-4xl mx-auto mt-8 p-8 bg-white shadow-lg rounded-lg">
-            <div className="flex justify-center mb-8">
-                <div className="relative w-32 h-32">
-                    <img
-                        className="w-full h-full object-cover rounded-full"
-                        src={instructor.photoURL}
-                        alt="Profile image"
-                    />
-                </div>
-            </div>
-            <h1 className="text-4xl font-bold text-center text-blue-600 mb-6">
-                {instructor.name}'s Profile
-            </h1>
-            <div className="text-center mb-6">
-                <p className="text-gray-700 text-lg leading-relaxed">
-                    <span className="font-semibold">Bio:</span> {instructor.bio}
-                </p>
-            </div>
-            <div className="text-center mb-6">
-                <p className="text-gray-700 text-lg leading-relaxed">
-                    <span className="font-semibold">Experience:</span>{" "}
-                    {instructor.experience}
-                </p>
-            </div>
-            <div className="text-center mb-6">
-                <p className="text-gray-700 text-lg leading-relaxed">
-                    <span className="font-semibold">Certifications:</span>{" "}
-                    {instructor.certifications}
-                </p>
-            </div>
+        <div className="flex items-center justify-center h-screen">
+            Profile not found
         </div>
     );
 };
 
-export default InstructorProfile;
+export default Profile;

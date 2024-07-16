@@ -55,7 +55,7 @@ const Home: React.FC = () => {
                     {filteredInstructors.map((instructor) => (
                         <Link
                             key={instructor.uid}
-                            to={`/instructors/${instructor.uid}`}
+                            to={`profile/${instructor.role}/${instructor.uid}`}
                         >
                             <div className="p-6 bg-white rounded-lg shadow-lg cursor-pointer">
                                 <img
@@ -69,9 +69,9 @@ const Home: React.FC = () => {
                                 <p className="mb-2">{instructor.bio}</p>
                                 {instructor.role === "instructor" && (
                                     <>
-                                        <p className="mb-2">
+                                        {/* <p className="mb-2">
                                             Experience: {instructor.experience}
-                                        </p>
+                                        </p> */}
                                         <p className="mb-2">
                                             Certifications:{" "}
                                             {instructor.certifications}

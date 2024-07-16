@@ -22,11 +22,18 @@ const Navbar: React.FC = () => {
                     <Link to="/" className="mr-4">
                         Home
                     </Link>
+
+                    {/* <button onClick={() => logout()}>Exit</button> */}
                 </div>
                 {currentUser ? (
                     <>
+                        <Link
+                            to={`profile/${userProfile?.role}/${currentUser.uid}`}
+                        >
+                            Profile
+                        </Link>
                         <img
-                            className="w-10 h-10 rounded-full cursor-pointer"
+                            className="w-10 h-10 rounded-full cursor-pointer object-cover "
                             src={
                                 userProfile
                                     ? userProfile.photoURL
