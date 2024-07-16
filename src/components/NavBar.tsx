@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { logout } from "../services/authService";
 
 const Navbar: React.FC = () => {
     const { currentUser, userProfile } = useAuth();
@@ -12,7 +13,7 @@ const Navbar: React.FC = () => {
                         Home
                     </Link>
 
-                    {/* <button onClick={() => logout()}>Exit</button> */}
+                    <button onClick={() => logout()}>Exit</button>
                 </div>
                 {currentUser ? (
                     <>
