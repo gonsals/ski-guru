@@ -4,13 +4,13 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCoP938TtXIZngJlbVWFPe45OL-_SF7quk",
-    authDomain: "skiguru-ce4a4.firebaseapp.com",
-    projectId: "skiguru-ce4a4",
-    storageBucket: "skiguru-ce4a4.appspot.com",
-    messagingSenderId: "644638437564",
-    appId: "1:644638437564:web:071a9f36b7bf21864260b9",
-    measurementId: "G-B40QJ02F6C",
+    apiKey: process.env.API_KEY,
+    authDomain: process.env.AUTH_DOMAIN,
+    projectId: process.env.PROJECT_ID,
+    storageBucket: process.env.STORAGE_BUCKET,
+    messagingSenderId: process.env.MESSAGING_SENDER_ID,
+    appId: process.env.APP_ID,
+    measurementId: process.env.MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
